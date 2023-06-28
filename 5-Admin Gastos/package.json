@@ -1,5 +1,5 @@
 {
-  "name": "4-pacientes",
+  "name": "5-admin-gastos",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,14 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "sas": "^3.0.4",
     "uid": "^2.0.2",
     "vue": "^3.2.47"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.24",
-    "tailwindcss": "^3.3.2",
     "vite": "^4.3.9"
   }
 }
