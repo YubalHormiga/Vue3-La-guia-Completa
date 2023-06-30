@@ -11,7 +11,9 @@
   "dependencies": {
     "sas": "^3.0.4",
     "uid": "^2.0.2",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vue3-circle-progress": "^1.0.7",
+    "vue3-circle-progress-bar": "^1.0.9"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
