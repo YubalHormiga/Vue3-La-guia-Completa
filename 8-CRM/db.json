@@ -1,0 +1,24 @@
+{
+  "clientes": [
+    {
+      "nombre": "vanesa2",
+      "apellido": "Fuentes",
+      "email": "vcuradofuentes@yahoo.es",
+      "telefono": "526-235-456",
+      "empresa": "Nautalia Viajes",
+      "puesto": "asdf",
+      "estado": true,
+      "id": 4
+    },
+    {
+      "nombre": "vanesa123567",
+      "apellido": "Fuentes",
+      "email": "vcuradofuentes@yahoo.es",
+      "telefono": "526-235-456",
+      "empresa": "Nautalia Viajes",
+      "puesto": "asdf",
+      "estado": true,
+      "id": 5
+    }
+  ]
+}
