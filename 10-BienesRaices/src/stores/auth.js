@@ -1,26 +1,24 @@
-import { ref, computed, onMounted } from "vue";
-import { defineStore } from 'pinia'
-import { useFirebaseAuth } from 'vuefire'
+import { ref, computed, onMounted } from 'vue'
+import { defineStore } from 'pinia'
+import { useFirebaseAuth } from 'vuefire'
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth'
 import { useRouter } from 'vue-router'
 
-
 export const useAuthStore = defineStore('auth', () => {
-    const auth = useFirebaseAuth();
+
+    const auth = useFirebaseAuth()
     const authUser = ref(null)
     const router = useRouter()
 
-
-
     const errorMsg = ref('')
     const errorCodes = {
-        "auth/user-not-found": "Usuario no Encontrado",
-        "auth/wrong-password": "Password Incorrecto",
-    };
+        'auth/user-not-found' : 'Usuario no encontrado',
+        'auth/wrong-password' : 'El password es incorrecto'
+    }
 
     onMounted(() => {
         onAuthStateChanged(auth, (user) => {
-            if (user) {
+            if(user) {
                 authUser.value = user
             }
         })
@@ -34,6 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
                 router.push({name: 'admin-propiedades'})
             })
             .catch(error => {
+                console.log(error)
                 errorMsg.value = errorCodes[error.code]
             })
     }
@@ -47,19 +46,19 @@ export const useAuthStore = defineStore('auth', () => {
         })
     }
 
-
     const hasError = computed(() => {
-        return errorMsg.value
+        return errorMsg.value 
     })
 
     const isAuth = computed(() => {
         return authUser.value
     })
+
     return {
         login,
+        logout, 
         hasError,
         errorMsg,
-        isAuth,
-        logout
+        isAuth
     }
 })
