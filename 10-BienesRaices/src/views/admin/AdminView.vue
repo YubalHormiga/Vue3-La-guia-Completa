@@ -1,8 +1,7 @@
 <script setup>
 import usePropiedades from "../../composables/usePropiedades";
-
-const { propiedadesCollection, propertyPrice } = usePropiedades();
-
+import {propertyPrice}  from '@/helpers/index'
+const { propiedadesCollection, deleteItem} = usePropiedades();
 </script>
 <template>
   <h2 class="text-center text-h3 m-y5 font-weight-bold">Admin Panel</h2>
@@ -19,10 +18,18 @@ const { propiedadesCollection, propertyPrice } = usePropiedades();
       </template>
 
       <v-list-item-title> {{ propiedad.titulo }} </v-list-item-title>
-      <v-list-item-subtitle> {{ propertyPrice(propiedad.precio) }} </v-list-item-subtitle>
-      <template v-slot:append> 
-        <v-btn color="info" flat class="mr-2">Editar</v-btn>
-        <v-btn color="red-darken-3" flat>Eliminar</v-btn>
+      <v-list-item-subtitle>
+        {{ propertyPrice(propiedad.precio) }}
+      </v-list-item-subtitle>
+      <template v-slot:append>
+        <v-btn
+          color="info"
+          flat
+          class="mr-2"
+          :to="{ name: 'editar-propiedad', params: { id: propiedad.id } }"
+          >Editar</v-btn
+        >
+        <v-btn color="red-darken-3" flat @click="deleteItem(propiedad.id, propiedad.imagen)">Eliminar</v-btn>
       </template>
     </v-list-item>
   </v-card>
