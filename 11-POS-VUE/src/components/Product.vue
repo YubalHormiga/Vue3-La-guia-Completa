@@ -1,17 +1,21 @@
 <script setup>
 import { useProductsStore } from "../stores/products";
 import { formatCurrency } from "../helpers/index";
+import { computed } from "vue";
 
-
-const products = useProductsStore()
-const prop = defineProps({
+const products = useProductsStore();
+const props = defineProps({
   product: {
     type: Object,
   },
 });
+
+const isProductNotAvailable = computed(() => props.product.availability === 0);
+
 </script>
 <template>
   <li
+    :class="{ 'opacity-30': isProductNotAvailable }"
     class="flex items-center space-x-6 border border-gray-200 p-6 bg-white shadow"
   >
     <img :src="product.image" :alt="product.name" class="h-24 w-24" />
@@ -37,9 +41,7 @@ const prop = defineProps({
           />
         </svg>
       </RouterLink>
-      <button 
-      @click="products.deleteProduct(product.id)"
-      >
+      <button @click="products.deleteProduct(product.id)">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
