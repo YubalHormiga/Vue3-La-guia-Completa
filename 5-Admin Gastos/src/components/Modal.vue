@@ -59,7 +59,7 @@ const agregarGasto = () => {
       error.value = "";
     }, 2000);
     return;
-    je;
+    
   }
 
   if (id) {
