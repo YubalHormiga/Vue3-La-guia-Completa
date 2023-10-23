@@ -15,7 +15,7 @@ const createService = async (req, res) => {
     try {
         const service = new Services(req.body)
         // console.log(service)
-        const result = await service.save()
+        await service.save()
         res.json({
             msg: 'El servicio se creó correctamente'
         })
