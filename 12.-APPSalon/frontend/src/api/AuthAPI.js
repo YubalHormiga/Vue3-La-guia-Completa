@@ -9,5 +9,8 @@ export default {
     },
     login(data) {
         return api.post('/auth/login', data)
+    },
+    auth() {
+        return api.get('/auth/user')
     }
 }

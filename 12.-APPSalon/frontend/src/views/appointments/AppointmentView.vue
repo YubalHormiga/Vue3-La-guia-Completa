@@ -11,10 +11,14 @@ const formatter = ref({
   date: "DD/MM/YYYY",
   month: "MMM",
 });
-const disableDate = (date)=>{
-  const today = new Date()
-  return date < today || date.getMonth > today.getMonth() + 1 || [0,6].includes(date.getDay())
-}
+const disableDate = (date) => {
+  const today = new Date();
+  return (
+    date < today ||
+    date.getMonth > today.getMonth() + 1 ||
+    [0, 6].includes(date.getDay())
+  );
+};
 </script>
 
 <template>
@@ -55,14 +59,18 @@ const disableDate = (date)=>{
           v-model="appointments.date"
         />
       </div>
-      <div class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-5 mt-10 lg:mt-0">
+      <div
+        v-if="appointments.isDateSelected"
+        class="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-5 mt-10 lg:mt-0"
+      >
         <button
           v-for="hour in appointments.hours"
-          class="block text-blue-500 rounded-lg text-lg font-black p-3"
-          @click="appointments.time = hour"
+          class="block text-blue-500 rounded-lg text-xl font-black p-3 disabled:opacity-10"
           :class="
             appointments.time === hour ? 'bg-blue-500 text-white' : 'bg-white'
           "
+          @click="appointments.time = hour"
+          :disabled="appointments.disableTime(hour) ? true : false"
         >
           {{ hour }}
         </button>

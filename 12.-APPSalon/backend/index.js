@@ -5,6 +5,7 @@ import cors from 'cors'
 import { db } from './config/db.js'
 import ServicesRoutes from './routes/servicesRoutes.js'
 import authRoutes from './routes/authRoutes.js'
+import appointmentRoutes from './routes/appointmentRoutes.js'
 
 //𝕍𝕒𝕣𝕚𝕒𝕓𝕝𝕖𝕤 𝕕𝕖 𝕖𝕟𝕥𝕠𝕣𝕟𝕠
 dotenv.config()
@@ -38,6 +39,7 @@ app.use(cors(corsOption))
 // en vez de get se usa .use pq se trata de un midelware pq abarca todas las pETICONES
 app.use('/api/services', ServicesRoutes) 
 app.use('/api/auth', authRoutes)
+app.use('/api/appointments', appointmentRoutes)
 //𝔻𝕖𝕗𝕚𝕟𝕚𝕣 ℙ𝕦𝕖𝕣𝕥𝕠
 const PORT = process.env.PORT || 4000 // aquí le decimos si existe esa partible inyéctala si no el puerto 4000
 

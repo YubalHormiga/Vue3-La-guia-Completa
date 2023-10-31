@@ -1,5 +1,6 @@
 import User from '../models/User.js'
 import { sendEmailVerification } from '../emails/authEmailService.js'
+import { generateJWT } from '../utils/index.js'
 
 const register = async (req, res) => {
     // console.log(req.body)
@@ -87,25 +88,33 @@ const login = async (req, res) => {
     }
 
     //Revisar si el usuario confirma su cuenta
-    if(!user.verified){
+    if (!user.verified) {
         const error = new Error('Tu cuenta no ha sido confirmada aún')
         return res.status(401).json({ msg: error.message })
     }
 
     //Comprobar el password
-    if (await user.checkPassword(password)) {
+    if(await user.checkPassword(password)) {
+        const token = generateJWT(user._id)
         res.json({
-            msg: 'Usuario atenticado'
+            token
         })
     } else {
         const error = new Error('El password es incorrecto')
-        return res.status(401).json({ msg: error.message })
+        return res.status(401).json({msg: error.message})
     }
+}
+const user = async (req, res) => {
+    const { user } = req
+    res.json(
+        user
+    )
 }
 
 export {
     register,
     verifyAccount,
-    login
+    login,
+    user
 
 }
