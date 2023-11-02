@@ -24,7 +24,24 @@ defineProps({
       </p>
     </div>
     <p class="text-2xl font-black text-right">
-      Total a pagar: <span class="text-blue-600">{{ formatCurrency(appointment.totalAmount) }}</span>
+      Total a pagar:
+      <span class="text-blue-600">{{
+        formatCurrency(appointment.totalAmount)
+      }}</span>
     </p>
+    <div class="flex gap-2 items-center">
+      <RouterLink
+        :to="{ name: 'edit-appointment', params: { id: appointment._id } }"
+        class="bg-slate-600 rounded-lg p-3 text-white text-sm uppercase font-black flex-1 md:flex-none"
+      >
+        Editar Cita
+      </RouterLink>
+
+      <button
+        class="bg-red-600 rounded-lg p-3 text-white text-sm uppercase font-black flex-1 md:flex-none"
+      >
+        Cancelar Cita
+      </button>
+    </div>
   </div>
 </template>

@@ -2,17 +2,21 @@ import { ref, computed, onMounted, inject, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import AppointmentAPI from '../api/AppointmentAPI'
-import { convertToISO } from '../helpers/date'
+import { convertToISO, convertToDDMMYY } from '../helpers/date'
+import { useUserStore } from '../stores/user'
 
 export const useAppointmentStore = defineStore('appointments', () => {
 
+    const appointmentId = ref('')
     const services = ref([])
     const date = ref('')
-    const hours = ref([])
     const time = ref('')
+    const appointmentsByDate = ref([])
+    const hours = ref([])
+
     const toast = inject('toast')
     const router = useRouter()
-    const appointmentsByDate = ref([])
+    const user = useUserStore()
 
     onMounted(() => {
         const startHour = 10
@@ -25,12 +29,31 @@ export const useAppointmentStore = defineStore('appointments', () => {
 
     watch(date, async () => {
         time.value = ''
-        if(date.value === '') return
+        if (date.value === '') return
         // Obtenemos las citas
-        const { data } = await AppointmentAPI.getByDate(date.value)
-        appointmentsByDate.value = data
-        console.log(data)
+        const { data } = await AppointmentAPI.getByDate(date.value)
+
+        // console.log(data)
+
+        if (appointmentId.value) {
+            appointmentsByDate.value = data.filter(appointment => appointment._id !== appointmentId.value)
+            time.value = data.filter(appointment => appointment._id === appointmentId.value)[0].time
+            console.log(time.value)
+        } else {
+            appointmentsByDate.value = data
+        }
     })
+
+    function setSelectedAppointment(appointment) {
+        // console.log(appointment)
+        services.value = appointment.services
+        date.value = convertToDDMMYY(appointment.date)
+        time.value = appointment.time
+        appointmentId.value = appointment._id
+        // console.log(appointmentId.value)
+
+        // console.log(time.value)
+    }
 
     function onServiceSelected(service) {
 
@@ -47,7 +70,7 @@ export const useAppointmentStore = defineStore('appointments', () => {
 
     }
 
-    async function createApointment() {
+    async function saveAppointment() {
         const appointment = {
             services: services.value.map(service => service._id),
             date: convertToISO(date.value),
@@ -56,24 +79,42 @@ export const useAppointmentStore = defineStore('appointments', () => {
         }
 
         // console.log(data)
-        try {
-            const { data } = await AppointmentAPI.create(appointment)
-            clearAppoinmentData()
-            toast.open({
-                message: data.msg,
-                type: 'success'
-            })
-            router.push({
-                name: 'my_appointments'
-            })
-        } catch (error) {
-            console.log(error)
-        }
+        if (appointmentId.value) {
+            try {
+                const { data } = await AppointmentAPI.update(appointmentId.value, appointment)
+                toast.open({
+                    message: data.msg,
+                    type: 'success'
+                })
 
+            } catch (error) {
+                console.log(error)
+            }
+
+        } else {
+
+            try {
+                const { data } = await AppointmentAPI.create(appointment)
+                toast.open({
+                    message: data.msg,
+                    type: 'success'
+                })
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        clearAppoinmentData()
+        user.getUserAppointments()
+
+        router.push({
+            name: 'my_appointments'
+        })
     }
 
     function clearAppoinmentData() {
 
+        appointmentId.value = ''
         services.value = [],
             date.value = '',
             time.value = ''
@@ -108,12 +149,14 @@ export const useAppointmentStore = defineStore('appointments', () => {
         date,
         hours,
         time,
+        setSelectedAppointment,
         onServiceSelected,
+        saveAppointment,
+        clearAppoinmentData,
         isServiceSelected,
-        totalAmount,
         noServiceSelected,
+        totalAmount,
         isValidReservation,
-        createApointment,
         isDateSelected,
         disableTime
     }

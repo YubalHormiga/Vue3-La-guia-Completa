@@ -1,24 +1,32 @@
 <script setup>
 import { onMounted } from "vue";
-import { RouterLink } from "vue-router";
-import { useRoute } from "vue-router";
-import { useAppointmentStore } from "../../stores/appointments";
+import { useRoute, useRouter } from "vue-router";
+import AppointmentAPI from "../../api/AppointmentAPI";
+import { useAppointmentStore } from "../../stores/appointments.js";
 
-const route = useRoute();
 const appointments = useAppointmentStore();
 
-onMounted(() => {
-  appointments.clearAppoinmentData();
+const route = useRoute();
+const router = useRouter();
+const { id } = route.params;
+
+onMounted(async () => {
+  try {
+    const { data } = await AppointmentAPI.getById(id);
+    appointments.setSelectedAppointment(data);
+  } catch (error) {
+    router.push({ name: "my_appointments" });
+  }
 });
 </script>
 
 <template>
   <nav class="my-5 flex gap-3">
     <RouterLink
-      :to="{ name: 'new-appointment' }"
+      :to="{ name: 'edit-appointment' }"
       class="flex-1 text-center p-3 uppercase font-extrabold hover:bg-blue-600 hover:text-white"
       :class="
-        route.name === 'new-appointment'
+        route.name === 'edit-appointment'
           ? 'bg-blue-500 text-white'
           : 'bg-white text-blue-500'
       "
@@ -26,10 +34,10 @@ onMounted(() => {
       Servicios
     </RouterLink>
     <RouterLink
-      :to="{ name: 'appointment-details' }"
+      :to="{ name: 'edit-appointment-details' }"
       class="flex-1 text-center p-3 uppercase font-extrabold hover:bg-blue-600 hover:text-white"
       :class="
-        route.name === 'appointment-details'
+        route.name === 'edit-appointment-details'
           ? 'bg-blue-500 text-white'
           : 'bg-white text-blue-500'
       "
