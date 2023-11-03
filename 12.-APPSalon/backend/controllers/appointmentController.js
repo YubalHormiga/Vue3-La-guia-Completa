@@ -1,7 +1,7 @@
 import { parse, formatISO, startOfDay, endOfDay, isValid } from 'date-fns'
 import Appointment from '../models/Appointment.js'
-import { validateObjectId, handleNotFoundError } from '../utils/index.js'
-
+import { validateObjectId, handleNotFoundError, formatDate } from '../utils/index.js'
+import { sendEmailCancelAppointment, sendEmailNewAppointment, sendEmailUpdateAppointment } from '../emails/appointmentEmailService.js'
 
 const createAppointment = async (req, res) => {
     const appointment = req.body
@@ -9,7 +9,9 @@ const createAppointment = async (req, res) => {
     try {
         const newAppointment = new Appointment(appointment)
         console.log(newAppointment)
-        await newAppointment.save()
+        const result = await newAppointment.save()
+
+        await sendEmailNewAppointment({ date: formatDate(result.date), time: result.time })
 
         res.json({
             msg: 'Tu reserva se ha realizado correctamente'
@@ -89,9 +91,37 @@ const updateAppointment = async (req, res) => {
 
     try {
         const result = await appointment.save()
+        await sendEmailUpdateAppointment({ date: formatDate(result.date), time: result.time })
         res.json({
             msg: 'Cita actualizada correctamente'
         })
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const deleteAppointment = async (req, res) => {
+    const { id } = req.params
+    //Validar por Object id
+    if (validateObjectId(id, res)) return
+    //Validar que exista
+    const appointment = await Appointment.findById(id).populate('services')
+    if (!appointment) {
+        return handleNotFoundError('La cita no existe', res)
+    }
+
+    // console.log(appointment.user.toString())
+    // console.log(req.user._id.toString())
+    if (appointment.user.toString() !== req.user._id.toString()) {
+        const error = new Error('No tienes los permisos')
+        return res.status(403).json({ msg: error.message })
+    }
+    try {
+        const result = await appointment.deleteOne()
+        await sendEmailCancelAppointment({ date: formatDate(result.date), time: result.time })
+
+        res.json({ msg: 'Cita cancelada correctamente' })
     } catch (error) {
         console.log(error)
     }
@@ -100,5 +130,6 @@ export {
     createAppointment,
     getAppointmentsByDate,
     getAppointmentById,
-    updateAppointment
+    updateAppointment,
+    deleteAppointment
 }
